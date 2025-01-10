@@ -19,15 +19,16 @@ class Book(Base):
     author = Column(String(30))
     price = Column(Float)
     quantity_available = Column(Integer)
-    created_at = Column(DateTime, default=func.now())
+    created_at = Column(DateTime, default=datetime.now)
 
-# class Cart(Base):
-#     _tablename_ = "carts"
-#     id = Column(Integer, primary_key=True, index=True)
-#     user_id = Column(Integer, ForeignKey("users.id"))
-#     book_id = Column(Integer, ForeignKey("books.id"))
-#     quantity = Column(Integer)
-#     created_at = Column(DateTime, default=datetime.utcnow)
+class Cart(Base):
+    __tablename__ = "carts"
+    id =Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"))
+    book_id = Column(Integer, ForeignKey("books.id"))
+    quantity = Column(Integer, nullable=True)
+    created_at = Column(DateTime, default=datetime.now)
+
 
 # class Order(Base):
 #     _tablename_ = "orders"
