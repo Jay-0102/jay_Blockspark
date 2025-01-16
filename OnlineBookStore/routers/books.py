@@ -17,6 +17,19 @@ def create_book(book: schemas.BookCreate,db: Session = Depends(get_db),
     
     # Admin is allowed to create books
     new_book = models.Book(**book.dict())
+    if not new_book.title:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Title is Required")
+    if not new_book.author:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Author name is Required")
+    if not new_book.price:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Price is Required")
+    if not new_book.quantity_available:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Quantity is Required")
+    if new_book.title.isdigit():
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Please Enter Valid Book Name")
+    for char in new_book.author:
+        if not (char.isalpha()):
+         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Please Enter Valid Author Name")    
     db.add(new_book)
     db.commit()
     db.refresh(new_book)
@@ -42,6 +55,8 @@ def delete_book(id:int,db:Session=Depends(database.get_db),
             detail="Only admins can create books.",
         )
     db_book=db.query(models.Book).filter(models.Book.id==id).first()
+    if not db_book:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Book not found")
     db.delete(db_book)
     db.commit()
     return {"message":"Book Delete Successfully"}

@@ -1,5 +1,4 @@
-from typing import Optional, List
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel
 from datetime import datetime
 
 class UserCreate(BaseModel):
@@ -19,10 +18,4 @@ class UserOut(BaseModel):
     id : int
     created_at : datetime
 
-class CartItem(BaseModel):
-    book_id: int
-    quantity: int
 
-# class OrderCreate(BaseModel):
-#     cart_items: List[CartItem]
-#     total_price: float

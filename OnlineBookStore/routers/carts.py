@@ -1,7 +1,6 @@
 from fastapi import APIRouter,HTTPException,Depends,status
 from database import get_db
 from models import User,Cart,Book
-from schemas import CartItem
 import auth
 from sqlalchemy.orm import Session
 
@@ -28,6 +27,8 @@ def view_cart(db:Session=Depends(get_db),current_user:User=Depends(auth.get_curr
     if current_user.role != "user":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,detail="Only Users can Access")
     db_cart=db.query(Cart).filter(User.id==current_user.id).all()
+    if not db_cart:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Cart is Empty")
     details=[]
     for item in db_cart:
         db_book=db.query(Book).filter(Book.id==item.book_id).first()

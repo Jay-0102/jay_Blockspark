@@ -1,5 +1,4 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime,func
-from sqlalchemy.orm import relationship
 from database import Base
 from datetime import datetime
 
@@ -25,15 +24,23 @@ class Cart(Base):
     __tablename__ = "carts"
     id =Column(Integer, primary_key=True, index=True)
     user_id = Column(Integer, ForeignKey("users.id"))
-    book_id = Column(Integer, ForeignKey("books.id"))
+    book_id = Column(Integer, ForeignKey("books.id",ondelete="CASCADE"))
     quantity = Column(Integer, nullable=True)
     created_at = Column(DateTime, default=datetime.now)
 
 
-# class Order(Base):
-#     _tablename_ = "orders"
-#     id = Column(Integer, primary_key=True, index=True)
-#     user_id = Column(Integer, ForeignKey("users.id"))
-#     total_price = Column(Float)
-#     status = Column(String)
-#     created_at = Column(DateTime, default=datetime.utcnow)
+class Order(Base):
+    __tablename__ = "orders"
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    total_price = Column(Float, nullable=False)
+    status = Column(String(30), default="pending")
+    created_at = Column(DateTime, default=datetime.now)
+
+class OrderItem(Base):
+    __tablename__="order_items"
+    id=Column(Integer,primary_key=True,index=True)
+    order_id=Column(Integer,ForeignKey("orders.id"))
+    book_id=Column(Integer,ForeignKey("books.id"))
+    quantity=Column(Integer)
+    price=Column(Float)
